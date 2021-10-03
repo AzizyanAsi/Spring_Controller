@@ -1,6 +1,9 @@
 package com.example.webik.repository;
+
 import com.example.webik.models.Item;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +20,5 @@ public interface ItemRepository extends JpaRepository<Item, Long>, JpaSpecificat
     List<Item> find(@Param("name") String name, @Param("priceFrom") Integer priceFrom);
 
     @Query("select i.name from Item i")
-    Collection<? extends Item> findAllNames(@Param("name") String name,Pageable pageable);
-
+    Collection<? extends Item> findAllNames(@Param("name") String name, Pageable pageable);
 }

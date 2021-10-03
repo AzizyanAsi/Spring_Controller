@@ -11,7 +11,7 @@ import java.util.Properties;
 @Configuration
 public class DataSourceConfig {
     @Bean
-    public DataSource dataSource(@Qualifier("hibernateProperties") Properties hibernateProperties){
+    public DataSource dataSource(@Qualifier("hibernateProperties") Properties hibernateProperties) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setConnectionProperties(hibernateProperties);
         return dataSource;

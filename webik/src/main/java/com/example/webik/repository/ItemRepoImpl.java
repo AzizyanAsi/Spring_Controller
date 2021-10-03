@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 @Component
-public class ItemRepoImpl  {
+public class ItemRepoImpl {
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -28,6 +28,7 @@ public class ItemRepoImpl  {
 
         group.addItem(item);
     }
+
     public List<Item> findAllNames(String name, int offset, int limit) {
         String q = "SELECT i FROM Item i WHERE i.name LIKE :name ORDER BY i.id";
         TypedQuery<Item> query = entityManager.createQuery(q, Item.class);
@@ -56,7 +57,7 @@ public class ItemRepoImpl  {
 
 
         String q = "from Item i";
-           List<? extends Item> items = entityManager.createQuery(q, Item.class)
+        List<? extends Item> items = entityManager.createQuery(q, Item.class)
                 .getResultList();
 
         return items;
