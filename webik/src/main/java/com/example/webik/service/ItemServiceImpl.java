@@ -1,69 +1,82 @@
 package com.example.webik.service;
 
 import com.example.webik.models.Item;
-import com.example.webik.repository.BasketRepo;
-import com.example.webik.repository.HibernateSessionFactoryUtil;
-import com.example.webik.repository.ItemHibernateRepo;
+import com.example.webik.repository.ItemRepoImpl;
+import com.example.webik.repository.ItemRepository;
+import com.example.webik.service.dto.ItemDTO;
+import com.example.webik.service.mapper.ItemDTOMapper;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 public class ItemServiceImpl implements ItemService{
-    private final ItemHibernateRepo itemRepository;
-    private final BasketRepo basketRepository;
-    private final SessionFactory sessionFactory;
 
-    public ItemServiceImpl(ItemHibernateRepo itemRepository,
-                           BasketRepo basketRepository) {
+    private final ItemRepository itemRepository;
+
+    @Autowired
+    public ItemServiceImpl(ItemRepository itemRepository) {
         this.itemRepository = itemRepository;
-        this.basketRepository = basketRepository;
-        this.sessionFactory = HibernateSessionFactoryUtil.getSessionfactory();;
     }
-
     @Override
-    public Item create(Item item) {
-        Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
+    @Transactional
+    public ItemDTO create(ItemDTO item) {
+        Item entity = ItemDTOMapper.mapToEntity(item);
 
-        itemRepository.insert(item);
-        basketRepository.getBasket(null);
+        itemRepository.save(entity);
 
-        transaction.commit();
-        session.close();
-        return item;
+        return ItemDTOMapper.mapToDTO(entity).orElse(null);
     }
-
     @Override
     public Item update(Item item) {
-        return itemRepository.update(item);
+        return itemRepository.save(item);
     }
-
     @Override
     public boolean delete(Long id) {
-        return itemRepository.deleteById(id);
+        if (!itemRepository.existsById(id)) {
+            return false;
+        }
+
+        itemRepository.deleteById(id);
+
+        return true;
+    }
+    @Override
+    public Optional<ItemDTO> getItem(Long id) {
+        Optional<Item> item = itemRepository.findById(id);
+
+        return ItemDTOMapper.mapToDTO(item.orElse(null));
+    }
+    @Override
+    public List<? extends ItemDTO> getAll() {
+        return ItemDTOMapper.mapToDTOs(itemRepository.findAll());
     }
 
-    @Override
-    public Optional<Item> getItem(Long id) {
-        return itemRepository.findById(id);
-    }
 
     @Override
-    public List<? extends Item> getAll() {
-        return itemRepository.getAllItems();
-    }
+    public List<? extends ItemDTO> findByName(String name) {
+        Specification<Item> specification = Specification.where(null);
 
+        return ItemDTOMapper
+                .mapToDTOs(itemRepository
+                        .find(name, 300));
+    }
     @Override
-    public List<? extends Item> findByName(String name) {
-        List<? extends Item> items= itemRepository.getAllItems();
-        return  items.stream()
-                .filter(i->i.getName().contains(name))
-                .collect(Collectors.toList());
+    public List<? extends ItemDTO> findAll(String name, int offset, int limit) {
+        Specification<Item> specification = Specification.where(null);
+
+        return ItemDTOMapper
+                .mapToDTOs(itemRepository
+                        .findAllNames(name,PageRequest.of(1,3,Sort.by(Sort.Direction.DESC))));
+
     }
 }

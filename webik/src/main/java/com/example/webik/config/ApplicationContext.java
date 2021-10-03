@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApplicationContext {
 
-        public static final AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext(myConfig.class);
+//        public static final AnnotationConfigApplicationContext context =
+//                new AnnotationConfigApplicationContext(myConfig.class);
 
 }

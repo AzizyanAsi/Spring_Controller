@@ -17,7 +17,7 @@ public class Item {
     @Column(name = "name")
     protected String name;
 
-    @Column(name = "base_price")
+    @Column(name = "price")
     protected double price;
     @Transient
     private String imageUrl;

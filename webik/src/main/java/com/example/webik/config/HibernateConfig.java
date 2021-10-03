@@ -3,41 +3,62 @@ package com.example.webik.config;
 import com.example.webik.models.*;
 import com.example.webik.util.DatabaseConfigurationUtil;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 
 import java.util.Properties;
 
 
+import org.springframework.context.annotation.Bean;
+
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+import java.util.Properties;
+
+@Configuration
+@EnableJpaRepositories(basePackages = {"com.example.webik.repository"})
+@EnableTransactionManagement
 public class HibernateConfig {
 
-    public SessionFactory sessionFactory(){
-        return configure().buildSessionFactory();
-    }
-    public org.hibernate.cfg.Configuration configure() {
-        org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
-        configuration.addProperties(hibernateProperties());
-        addAnnotatedClasses(configuration);
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
+        LocalContainerEntityManagerFactoryBean em
+                = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource);
+        em.setPackagesToScan("com.example.webik");
 
-        return configuration;
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        em.setJpaVendorAdapter(vendorAdapter);
+        em.setJpaProperties(hibernateProperties());
+
+        return em;
     }
 
+    @Bean
+    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory);
+
+        return transactionManager;
+    }
+
+    @Bean
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
+        return new PersistenceExceptionTranslationPostProcessor();
+    }
+
+    @Bean("hibernateProperties")
     public Properties hibernateProperties() {
         return DatabaseConfigurationUtil
                 .readProperties("hibernate.properties");
-    }
-
-    private void addAnnotatedClasses(org.hibernate.cfg.Configuration configuration) {
-//        configuration.addAnnotatedClass(Item.class);
-//        configuration.addAnnotatedClass(ItemDetails.class);
-//        configuration.addAnnotatedClass(Group.class);
-//        configuration.addAnnotatedClass(Basket.class);
-        configuration.addAnnotatedClass(Configuration.class);
-        configuration.addAnnotatedClass(Item.class);
-        configuration.addAnnotatedClass(ItemDetails.class);
-        configuration.addAnnotatedClass(Basket.class);
-        configuration.addAnnotatedClass(ItemBasket.class);
-        configuration.addAnnotatedClass(Generative.class);
-        configuration.addAnnotatedClass(Stock.class);
-        configuration.addAnnotatedClass(Group.class);
     }
 }
