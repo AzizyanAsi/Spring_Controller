@@ -20,6 +20,6 @@ public interface ItemService {
 
     List<ItemDTO> findByName(String name);
 
-    Page<Item> findAll(String name, int offset, int limit);
+    List<Item> findAll(String name, int offset, int limit);
 
 }

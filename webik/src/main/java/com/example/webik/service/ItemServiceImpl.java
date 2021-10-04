@@ -5,8 +5,6 @@ import com.example.webik.repository.ItemRepository;
 import com.example.webik.service.dto.ItemDTO;
 import com.example.webik.service.mapper.ItemDTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -72,8 +70,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Page<Item> findAll(String name, int offset, int limit) {
-        return itemRepository.findAll(nameLike(name), PageRequest.of(1, 3, Sort.by(Sort.Direction.DESC)));
+    public List<Item> findAll(String name, int offset, int limit) {
+        MyPageable myPageable = new MyPageable(nameLike(name), offset, limit, Sort.by(Sort.Direction.DESC));
+        return itemRepository.findAll(myPageable).getContent();
     }
 
     private Specification<Item> nameLike(String name) {

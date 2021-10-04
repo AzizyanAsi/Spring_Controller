@@ -26,18 +26,14 @@ public class ItemController {
         return ResponseEntity.of(itemService.getItem(id));
     }
 
-    @GetMapping
-    public List<? extends ItemDTO> getAll() {
-        return itemService.getAll();
-    }
 
     @GetMapping("/search")
     public List<ItemDTO> search(@RequestParam String name) {
         return itemService.findByName(name);
     }
 
-    @GetMapping("/findAll")
-    public Page<Item> findAll(@RequestParam String name, @RequestParam int offset, @RequestParam int limit) {
+    @GetMapping
+    public List<Item> findAll(@RequestParam String name, @RequestParam int offset, @RequestParam int limit) {
         return itemService.findAll(name, offset, limit);
     }
 
