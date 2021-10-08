@@ -21,15 +21,15 @@ public class Item {
     protected double price;
     @Transient
     private String imageUrl;
-    @Column(name = "currency")
-    protected Currency currency;
+//    @Column(name = "currency")
+//    protected Currency currency;
     @Transient
     protected Configuration configuration;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
     @JsonBackReference
-    private Group parentGroup;
+    private Group group;
 
     @OneToOne(mappedBy = "item", cascade = CascadeType.ALL,
             orphanRemoval = true)
@@ -48,7 +48,7 @@ public class Item {
         this.name = name;
         this.price = price;
         this.configuration = configuration;
-        this.currency = Currency.getInstance(Locale.getDefault());
+//        this.currency = Currency.getInstance(Locale.getDefault());
     }
 
     public Item(Long id, String name, String url, double price, Configuration configuration) {
@@ -56,7 +56,7 @@ public class Item {
         this.name = name;
         this.price = price;
         this.configuration = configuration;
-        this.currency = Currency.getInstance(Locale.getDefault());
+//        this.currency = Currency.getInstance(Locale.getDefault());
         this.imageUrl = url;
     }
 
@@ -69,8 +69,8 @@ public class Item {
                 .append(name)
                 .append("_")
                 .append(calculatePrice())
-                .append("_")
-                .append(currency)
+//                .append("_")
+//                .append(currency)
                 .append("_")
                 .append(configuration.resolution.name())
                 .append("_")
@@ -78,12 +78,12 @@ public class Item {
                 .append("}").toString();
     }
 
-    public Group getParentGroup() {
-        return parentGroup;
+    public Group getGroup() {
+        return group;
     }
 
-    public void setParentGroup(Group parentGroup) {
-        this.parentGroup = parentGroup;
+    public void setGroup(Group parentGroup) {
+        this.group = parentGroup;
     }
 
     public Long getId() {
@@ -118,13 +118,13 @@ public class Item {
         this.price = price;
     }
 
-    public Currency getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
-    }
+//    public Currency getCurrency() {
+//        return currency;
+//    }
+//
+//    public void setCurrency(Currency currency) {
+//        this.currency = currency;
+//    }
 
     public double calculatePrice() {
         return price * configuration.resolution.getCoefficient();

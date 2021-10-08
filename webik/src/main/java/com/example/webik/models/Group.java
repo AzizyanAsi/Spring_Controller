@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "\"group\"")
 public class Group {
@@ -16,11 +18,11 @@ public class Group {
     private String name;
 
     @Transient
-    private ArrayList<Group> groups;
+    private List<Group> groups;
 
     @OneToMany(mappedBy = "group")
     @JsonIgnore
-    private ArrayList<Item> items;
+    private List<Item> items;
 
     @Transient
     private Group groupParent;
@@ -41,7 +43,7 @@ public class Group {
     }
     public void addItem(Item item) {
         this.items.add(item);
-        item.setParentGroup(this);
+        item.setGroup(this);
     }
     public void printContent() {
         System.out.printf("Current group name: %s id: %s%n [", name, id);
@@ -70,7 +72,7 @@ public class Group {
         this.groupParent = groupParent;
     }
 
-    public ArrayList<Group> getGroups() {
+    public List<Group> getGroups() {
         return groups;
     }
 
@@ -78,7 +80,7 @@ public class Group {
         this.groups = groups;
     }
 
-    public ArrayList<Item> getItems() {
+    public List<Item> getItems() {
         return items;
     }
 

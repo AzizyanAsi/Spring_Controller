@@ -20,8 +20,8 @@ public class Generative extends Item {
                 .append(complexity)
                 .append("_")
                 .append(calculatePrice())
-                .append("_")
-                .append(currency)
+//                .append("_")
+//                .append(currency)
                 .append("_")
                 .append(configuration.resolution.name())
                 .append("}").toString();

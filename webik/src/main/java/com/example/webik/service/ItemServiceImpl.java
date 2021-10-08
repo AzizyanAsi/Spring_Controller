@@ -4,7 +4,10 @@ import com.example.webik.models.Item;
 import com.example.webik.repository.ItemRepository;
 import com.example.webik.service.dto.ItemDTO;
 import com.example.webik.service.mapper.ItemDTOMapper;
+import com.example.webik.service.specification.SearchCriteria;
+import com.example.webik.service.specification.SpecCriteriaQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -71,7 +74,24 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> findAll(String name, int offset, int limit) {
-        MyPageable myPageable = new MyPageable(nameLike(name), offset, limit, Sort.by(Sort.Direction.DESC));
+        PageRequest myPageable = new PageRequest(nameLike(name), offset, limit, Sort.by("id"));
+        return itemRepository.findAll(myPageable).getContent();
+    }
+
+    @Override
+    public List<Item> findAll(SearchCriteria searchCriteria) {
+        Specification<Item> specification = getItemSearchSpecification(searchCriteria);
+        Pageable myPageable = new PageRequest(specification, searchCriteria.getLimit(), searchCriteria.getOffset(), Sort.by("id"));
+        return itemRepository.findAll(myPageable).getContent();
+    }
+
+    private Specification<Item> getItemSearchSpecification(SearchCriteria criteria) {
+        return SpecCriteriaQuery.findItem(criteria);
+    }
+
+    @Override
+    public List<Item> findAll(int offset, int limit) {
+        PageRequest myPageable = new PageRequest(offset, limit, Sort.by("id"));
         return itemRepository.findAll(myPageable).getContent();
     }
 

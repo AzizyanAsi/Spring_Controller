@@ -34,7 +34,7 @@ public class ItemDTOMapper {
         dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setPrice((int) entity.getPrice());
-        dto.setGroupName(entity.getParentGroup() == null ? null : entity.getParentGroup().getName());
+        dto.setGroupName(entity.getGroup() == null ? null : entity.getGroup().getName());
         dto.setItemDetails(ItemDetailsDTO.mapToDTO(entity.getItemDetail()));
 
         return Optional.of(dto);

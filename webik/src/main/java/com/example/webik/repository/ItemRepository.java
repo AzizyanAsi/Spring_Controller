@@ -14,11 +14,11 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long>, JpaSpecificationExecutor<Item> {
 
-    @Query("select i from Item i join fetch i.parentGroup" +
+    @Query("select i from Item i join fetch i.group" +
             " where lower(i.name) = lower(:name)" +
             " and i.price > :priceFrom")
     List<Item> find(@Param("name") String name, @Param("priceFrom") Integer priceFrom);
 
-    @Query("select i.name from Item i")
-    Collection<? extends Item> findAllNames(@Param("name") String name, Pageable pageable);
+//    @Query("select i.name from Item i")
+//    Collection<? extends Item> findAllNames(@Param("name") String name, Pageable pageable);
 }

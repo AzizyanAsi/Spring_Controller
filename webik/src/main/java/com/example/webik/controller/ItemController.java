@@ -3,8 +3,10 @@ package com.example.webik.controller;
 import com.example.webik.models.Item;
 import com.example.webik.service.ItemService;
 import com.example.webik.service.dto.ItemDTO;
+import com.example.webik.service.specification.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,14 +29,20 @@ public class ItemController {
     }
 
 
-    @GetMapping("/search")
-    public List<ItemDTO> search(@RequestParam String name) {
-        return itemService.findByName(name);
+    @GetMapping("/searcho")
+    public List<Item> findAllName(@RequestParam String name, @RequestParam int offset, @RequestParam int limit) {
+        return itemService.findAll(name, offset, limit);
     }
 
-    @GetMapping
-    public List<Item> findAll(@RequestParam String name, @RequestParam int offset, @RequestParam int limit) {
-        return itemService.findAll(name, offset, limit);
+    @GetMapping("/search")
+    public List<Item> findAllName(SearchCriteria criteria) {
+        return itemService.findAll(criteria);
+    }
+
+    @GetMapping("/findAll")
+    public List<Item> findAll(@RequestParam int offset, @RequestParam int limit) {
+
+        return itemService.findAll(offset, limit);
     }
 
     @PostMapping
@@ -46,9 +54,9 @@ public class ItemController {
     @PutMapping("/{id}")
     public Item updateItem(@RequestBody Item item,
                            @PathVariable Long id) {
+
         itemService.update(item);
         return item;
-
     }
 
     @DeleteMapping("/{id}")
